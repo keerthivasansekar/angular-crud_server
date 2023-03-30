@@ -31,12 +31,20 @@ $routes->set404Override();
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
 $routes->group("api", function ($routes) {
+    $routes->group("auth", function ($routes) {
+        $routes->post("register", "AuthController::register");
+        $routes->post("login", "AuthController::login");
+        $routes->post("forgot-password", "AuthController::forgot_password");
+        $routes->post("reset-password", "AuthController::reset_password");
+        $routes->post("verify-otp", "AuthController::verify_otp");
+        $routes->post("reset-password", "AuthController::reset_password");
+    });
     $routes->group("products", function ($routes) {
-        $routes->post("add", "ProductController::create_product");
-        $routes->post("edit", "ProductController::update_product");
-        $routes->get("delete/(:num)", "ProductController::delete_product/$1");
-        $routes->get("(:any)", "ProductController::read_products/$1");
-        $routes->get("/", "ProductController::read_products");
+        $routes->post("add", "ProductController::create_product", ['filter' => 'authFilter']);
+        $routes->post("edit", "ProductController::update_product", ['filter' => 'authFilter']);
+        $routes->get("delete/(:num)", "ProductController::delete_product/$1", ['filter' => 'authFilter']);
+        $routes->get("(:any)", "ProductController::read_products/$1", ['filter' => 'authFilter']);
+        $routes->get("/", "ProductController::read_products", ['filter' => 'authFilter']);
     });
 });
 /*
